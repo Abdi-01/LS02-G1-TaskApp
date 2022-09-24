@@ -26,37 +26,78 @@ app.use(express.json());
 
 app.post("/api/user/register", async (req, res) => {
   try {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
     await dbQuery(`INSERT INTO users (email, password) VALUES 
     (${dbConfig.escape(email)},${dbConfig.escape(password)});`)
-  
+
     let user = await dbQuery(`
       SELECT * FROM users u WHERE u.email = ${dbConfig.escape(email)}
       AND u.password = ${dbConfig.escape(password)};`
     );
-  
-    user.length > 0 ? res.status(200).send({success: true, email}) : res.status(400).send({success: false})
+
+    user.length > 0 ? res.status(200).send({ success: true, email }) : res.status(400).send({ success: false })
   } catch (error) {
     console.log(error)
-    res.status(500).send({success: false})
+    res.status(500).send({ success: false })
   }
 })
 
 app.post("/api/user/login", async (req, res) => {
   try {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     let user = await dbQuery(`
       SELECT * FROM users u WHERE u.email = ${dbConfig.escape(email)}
       AND u.password = ${dbConfig.escape(password)};`
     );
-  
-    user.length > 0 ? res.status(200).send({success: true}) : res.status(400).send({success: false})
+
+    user.length > 0 ? res.status(200).send({ success: true }) : res.status(400).send({ success: false })
   } catch (error) {
     console.log(error)
-    res.status(500).send({success: false})
+    res.status(500).send({ success: false })
   }
 })
+
+app.get("/api/task/all_task", async (req, res) => {
+  try {
+    let task = await dbQuery(` SELECT * from tasks WHERE user_id = 1 `);
+    res.status(200).send(task)
+  } catch (error) {
+    res.status(500).send({ success: false })
+  }
+});
+
+app.post("/api/task/add_task", async (req, res) => {
+  try {
+    const {task, category} = req.body
+
+    let addTask = await dbQuery(`INSERT INTO tasks (user_id, task, category) VALUES (1, ${dbConfig.escape(task)}, ${dbConfig.escape(category)})`);
+
+    res.status(200).send({ success: true }) 
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ success: false })
+  }
+})
+
+app.patch("/api/task/update_task", async (req, res) => {
+  try {
+    const {idTask, newTask} = req.body 
+
+    const updateTask = await dbQuery(`UPDATE tasks SET Category = ${dbConfig.escape(newTask)} WHERE idtask = ${dbConfig.escape(idTask)};`)
+
+    res.status(200).send({
+      success: true,
+      massage: 'Data Updated'
+    })
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error)
+  }
+})
+
 
 app.get("/api", (req, res) => {
   res.status(200).send(`Hello, this is my API`);

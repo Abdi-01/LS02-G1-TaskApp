@@ -3,8 +3,8 @@ const util = require('util');
 
 const dbConfig = mysql.createPool({
 	host: 'localhost',
-	user: 'Luky',
-	password: '@Jj4SMNnL280697',
+	user: 'agung',
+	password: 'VikriAgung1105',
 	database: 'git_collab',
 });
 

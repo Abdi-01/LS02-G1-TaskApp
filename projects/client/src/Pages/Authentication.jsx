@@ -4,6 +4,7 @@ import { AiFillCloseCircle, AiFillEye, AiFillEyeInvisible } from 'react-icons/ai
 import { InputGroup, Input, InputRightElement, Button, Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
 import axios from 'axios';
 import { API_URL } from '../helper/helper';
+import { useNavigate } from 'react-router-dom';
 
 export default function AuthenticationPage() {
 	const [showPassword, setShowPassword] = useState(false);
@@ -11,11 +12,14 @@ export default function AuthenticationPage() {
 	const [form, setForm] = useState({ email: '', password: '' });
 	const [isSuccess, setIsSuccess] = useState(null);
 
+	const navigate = useNavigate();
+
 	const handleLogin = async () => {
 		try {
 			const login = await axios.post(API_URL + '/user/login', form);
 			if (login.data?.success) {
 				setIsSuccess((prev) => (prev = true));
+				navigate('/todo')
 				return;
 			}
 			setIsSuccess((prev) => (prev = false));
